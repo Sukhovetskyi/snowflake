@@ -27,3 +27,5 @@ values ('banana')
 , ('plum')
 , ('avocado')
 , ('starfruit');
+
+select * from PC_RIVERY_DB.PUBLIC.FRUIT_LOAD_LIST;
