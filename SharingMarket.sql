@@ -162,3 +162,68 @@ ON n_regionkey = r_regionkey
 
 SELECT *
 FROM INTL_DB.PUBLIC.NATIONS_SAMPLE_PLUS_ISO;
+
+
+CREATE TABLE INTL_DB.PUBLIC.CURRENCIES 
+(
+  CURRENCY_ID INTEGER, 
+  CURRENCY_CHAR_CODE varchar(3), 
+  CURRENCY_SYMBOL varchar(4), 
+  CURRENCY_DIGITAL_CODE varchar(3), 
+  CURRENCY_DIGITAL_NAME varchar(30)
+)
+  COMMENT = 'Information about currencies including character codes, symbols, digital codes, etc.';
+
+CREATE TABLE INTL_DB.PUBLIC.COUNTRY_CODE_TO_CURRENCY_CODE 
+  (
+    COUNTRY_CHAR_CODE Varchar(3), 
+    COUNTRY_NUMERIC_CODE INTEGER, 
+    COUNTRY_NAME Varchar(100), 
+    CURRENCY_NAME Varchar(100), 
+    CURRENCY_CHAR_CODE Varchar(3), 
+    CURRENCY_NUMERIC_CODE INTEGER
+  ) 
+  COMMENT = 'Many to many code lookup table';
+
+  CREATE FILE FORMAT INTL_DB.PUBLIC.CSV_COMMA_LF_HEADER
+  TYPE = 'CSV'
+  COMPRESSION = 'AUTO' 
+  FIELD_DELIMITER = ',' 
+  RECORD_DELIMITER = '\n' 
+  SKIP_HEADER = 1 
+  FIELD_OPTIONALLY_ENCLOSED_BY = 'NONE' 
+  TRIM_SPACE = FALSE 
+  ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE 
+  ESCAPE = 'NONE' 
+  ESCAPE_UNENCLOSED_FIELD = '\134' 
+  DATE_FORMAT = 'AUTO' 
+  TIMESTAMP_FORMAT = 'AUTO' 
+  NULL_IF = ('\\N');
+
+create or replace stage INTL_DB.PUBLIC.like_a_window_into_an_s3_bucket
+url = 's3://uni-lab-files/smew/';
+
+copy into INTL_DB.PUBLIC.COUNTRY_CODE_TO_CURRENCY_CODE
+from @INTL_DB.PUBLIC.like_a_window_into_an_s3_bucket
+files = ( 'country_code_to_currency_code.csv')
+file_format = ( format_name='CSV_COMMA_LF_HEADER' );
+
+
+
+CREATE VIEW SIMPLE_CURRENCY 
+( CTY_CODE,CUR_CODE) AS
+  select COUNTRY_CHAR_CODE, CURRENCY_CHAR_CODE from INTL_DB.PUBLIC.COUNTRY_CODE_TO_CURRENCY_CODE;
+
+  select * from SIMPLE_CURRENCY;
+
+use role accountadmin;
+grant override share restrictions on account to role accountadmin;
+
+SELECT CURRENT_ACCOUNT();
+
+
+ALTER VIEW INTL_DB.PUBLIC.NATIONS_SAMPLE_PLUS_ISO
+SET SECURE; 
+
+ALTER VIEW INTL_DB.PUBLIC.SIMPLE_CURRENCY
+SET SECURE;
