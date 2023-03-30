@@ -227,3 +227,7 @@ SET SECURE;
 
 ALTER VIEW INTL_DB.PUBLIC.SIMPLE_CURRENCY
 SET SECURE;
+
+
+-- https://jq86994.ca-central-1.aws.snowflakecomputing.com
+-- JQ86994
