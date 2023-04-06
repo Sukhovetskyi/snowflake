@@ -218,11 +218,11 @@ select GRADER(step, (actual = expected), actual, expected, description) as grade
 
 
 
-create stage garden_plants.veggies.like_a_window_into_an_s3_bucket 
- url = 's3://uni-lab-files';
+create or replace stage garden_plants.veggies.like_a_window_into_an_s3_bucket 
+ url = 's3://uni-klaus';
 
-list @like_a_window_into_an_s3_bucket/this_;
-
+list @like_a_window_into_an_s3_bucket/;
+list s3://uni-klaus;
 
 --Set your worksheet drop list role to ACCOUNTADMIN
 --Set your worksheet drop list database and schema to the location of your GRADER function
